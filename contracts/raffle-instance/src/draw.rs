@@ -214,6 +214,15 @@ pub(crate) fn provide_randomness(
         return Err(Error::NoRandomnessRequest);
     }
 
+    let req_ledger: u32 = env
+        .storage()
+        .instance()
+        .get(&DataKey::RandomnessRequestLedger)
+        .unwrap_or(0);
+    if env.ledger().sequence() < req_ledger + RANDOMNESS_MIN_DELAY_LEDGERS {
+        return Err(Error::RandomnessTooEarly);
+    }
+
     let stored: u64 = env
         .storage()
         .instance()

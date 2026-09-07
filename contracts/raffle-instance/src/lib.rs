@@ -364,6 +364,9 @@ impl RaffleInstance {
         if config.prize_amount > MAX_PRIZE_AMOUNT {
             return Err(Error::InvalidParameters);
         }
+        if exceeds_internal_randomness_cap(&config.randomness_source, config.prize_amount) {
+            return Err(Error::RandomnessSourceTooWeakForPrize);
+        }
         if config.prizes.is_empty() {
             return Err(Error::InvalidParameters);
         }
